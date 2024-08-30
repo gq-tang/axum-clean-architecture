@@ -1,0 +1,16 @@
+[package]
+name = "axum-clean-architecture"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-trait = "0.1.81"
+axum = "0.7.5"
+dotenv = "0.15.0"
+serde = { version = "1.0.209", features = ["derive"] }
+sqlx = { version = "0.8.1", features = ["sqlx-sqlite", "runtime-async-std", "derive", "sqlite","time"] }
+time = { version = "0.3.36", features = ["serde", "serde-human-readable"] }
+tokio = { version = "1.39.3", features = ["full"] }
+tower-http = { version = "0.5.2", features = ["trace"] }
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
