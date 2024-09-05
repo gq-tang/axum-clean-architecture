@@ -7,6 +7,7 @@ edition = "2021"
 async-trait = "0.1.81"
 axum = "0.7.5"
 dotenv = "0.15.0"
+md5 = "0.7.0"
 serde = { version = "1.0.209", features = ["derive"] }
 sqlx = { version = "0.8.1", features = ["sqlx-sqlite", "runtime-async-std", "derive", "sqlite","time"] }
 time = { version = "0.3.36", features = ["serde", "serde-human-readable"] }

@@ -4,6 +4,6 @@ use async_trait::async_trait;
 
 #[async_trait]
 pub trait UserRepository: Send + Sync {
-    async fn create(&self, user: CreateUser) -> RepositoryResult<User>;
-    async fn get(&self,user_id:i64)->RepositoryResult<User>; 
+    async fn create(&self, user: CreateUser) -> RepositoryResult<i64>;
+    async fn get_by_username(&self, user_name: String) -> RepositoryResult<User>;
 }
