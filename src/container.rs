@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::{
     domain::{repositories::todo::TodoRepository, services::todo::TodoService},
     infrastructure::{
-        database::{self, sqlite},
+        database::{ sqlite},
         repositories::todo::TodoSqlxRepository,
     },
     services::todo::TodoServiceImpl,
