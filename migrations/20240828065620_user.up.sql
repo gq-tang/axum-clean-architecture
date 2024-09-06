@@ -9,4 +9,4 @@ create table
         updated_at timestamp not null DEFAULT CURRENT_TIMESTAMP
     );
 
-create index idx_user_user_name on users (user_name);
+create unique index idx_user_user_name on users (user_name);

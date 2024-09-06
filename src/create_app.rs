@@ -1,4 +1,7 @@
-use crate::{api::controllers::todo_handler, container::Container};
+use crate::{
+    api::controllers::{todo_handler, user_handler},
+    container::Container,
+};
 use axum::{
     routing::{get, post},
     Router,
@@ -7,11 +10,12 @@ use std::sync::Arc;
 use tower_http::trace::TraceLayer;
 
 pub fn create_app(container: Arc<Container>) -> Router<()> {
-    let todo_service = container.todo_service.clone();
     let app = Router::new()
-        .route("/todo", post(todo_handler::create))
-        .route("/todo", get(todo_handler::list))
+        .route("/todo", post(todo_handler::create_todo_handler))
+        .route("/todo", get(todo_handler::list_todo_handler))
+        .route("/user", post(user_handler::register_handler))
         .layer(TraceLayer::new_for_http())
-        .with_state(todo_service);
+        .with_state(container);
+
     app
 }
