@@ -12,7 +12,13 @@ dotenv = "0.15.0"
 jsonwebtoken = "9.3.0"
 md5 = "0.7.0"
 serde = { version = "1.0.209", features = ["derive"] }
-sqlx = { version = "0.8.1", features = ["sqlx-sqlite", "runtime-async-std", "derive", "sqlite","time"] }
+sqlx = { version = "0.8.1", features = [
+    "sqlx-sqlite",
+    "runtime-async-std",
+    "derive",
+    "sqlite",
+    "time",
+] }
 time = { version = "0.3.36", features = ["serde", "serde-human-readable"] }
 tokio = { version = "1.39.3", features = ["full"] }
 tower-http = { version = "0.5.2", features = ["trace"] }

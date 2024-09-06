@@ -41,7 +41,7 @@ impl TodoRepository for TodoSqlxRepository {
         conditions.push(format!("user_id={}", params.user_id));
 
         if let Some(title) = params.title.clone() {
-            conditions.push(format!("title like %{}%", title));
+            conditions.push(format!("title like '%{}%'", title));
         }
         if conditions.len() > 0 {
             query = query + " where " + &conditions.join(" and ");

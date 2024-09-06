@@ -7,6 +7,7 @@ use time::PrimitiveDateTime;
 
 #[derive(Deserialize, Serialize)]
 pub struct CreateTodoDTO {
+    #[serde(skip)]
     pub user_id: i64,
     pub title: String,
     pub description: String,
