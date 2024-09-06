@@ -5,6 +5,7 @@ use crate::domain::{
     services::user::UserService,
 };
 use async_trait::async_trait;
+use dotenv::dotenv;
 use std::sync::Arc;
 
 pub struct UserServiceImpl {
@@ -13,6 +14,8 @@ pub struct UserServiceImpl {
 
 impl UserServiceImpl {
     pub fn new(repository: Arc<dyn UserRepository>) -> Self {
+        dotenv().ok();
+
         UserServiceImpl { repository }
     }
 }
@@ -26,10 +29,22 @@ impl UserService for UserServiceImpl {
             .map_err(|e| -> CommonError { e.into() })
     }
 
-    async fn get_by_username(&self, user_name: String) -> Result<User, CommonError> {
-        self.repository
+    async fn login(&self, user_name: String, password: String) -> Result<User, CommonError> {
+        let password = md5::compute(password);
+        let password = format!("{:X}", password);
+
+        let user = self
+            .repository
             .get_by_username(user_name)
             .await
-            .map_err(|e| -> CommonError { e.into() })
+            .map_err(|e| -> CommonError { e.into() })?;
+        if user.password != password {
+            return Err(CommonError {
+                message: "Account or password error".to_string(),
+                code: 404,
+            });
+        }
+
+        Ok(user)
     }
 }

@@ -1,9 +1,9 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use time::PrimitiveDateTime;
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct User {
-    pub id: i32,
+    pub id: i64,
     pub user_name: String,
     pub nick_name: String,
     pub password: String,

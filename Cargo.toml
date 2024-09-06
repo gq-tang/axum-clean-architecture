@@ -6,7 +6,10 @@ edition = "2021"
 [dependencies]
 async-trait = "0.1.81"
 axum = "0.7.5"
+axum-extra = { version = "0.9.3", features = ["typed-header"] }
+chrono = "0.4.38"
 dotenv = "0.15.0"
+jsonwebtoken = "9.3.0"
 md5 = "0.7.0"
 serde = { version = "1.0.209", features = ["derive"] }
 sqlx = { version = "0.8.1", features = ["sqlx-sqlite", "runtime-async-std", "derive", "sqlite","time"] }

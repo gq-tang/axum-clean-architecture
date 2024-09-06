@@ -22,7 +22,7 @@ impl From<CreateUser> for CreateUserPO {
 
 #[derive(sqlx::FromRow)]
 pub struct UserPO {
-    pub id: i32,
+    pub id: i64,
     pub user_name: String,
     pub nick_name: String,
     pub password: String,

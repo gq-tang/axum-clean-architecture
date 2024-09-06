@@ -1,10 +1,11 @@
-use std::sync::Arc;
-
 use axum_clean_architecture::{container::Container, create_app};
+use dotenv::dotenv;
+use std::sync::Arc;
 use tracing::info;
 
 #[tokio::main]
 async fn main() {
+    dotenv().ok();
     tracing_subscriber::fmt::init();
 
     let container = Container::new().await;

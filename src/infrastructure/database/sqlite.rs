@@ -1,19 +1,16 @@
 use std::env;
 
-use dotenv::dotenv;
-use sqlx::{Pool,Sqlite, SqlitePool};
+use sqlx::{Pool, Sqlite, SqlitePool};
 
 use crate::domain::constants::SQLITE_DB_URI;
 
-pub type DBConn=Pool<Sqlite>;
+pub type DBConn = Pool<Sqlite>;
 
-pub async fn db_pool()->DBConn {
-    dotenv().ok(); 
-    let database_url=env::var(SQLITE_DB_URI)
-    .expect(&*format!("{} must be set",SQLITE_DB_URI));
+pub async fn db_pool() -> DBConn {
+    let database_url = env::var(SQLITE_DB_URI).expect(&*format!("{} must be set", SQLITE_DB_URI));
 
-    let pool=SqlitePool::connect(&database_url)
-    .await
-    .expect("cann't connect sqlite");
-    pool 
+    let pool = SqlitePool::connect(&database_url)
+        .await
+        .expect("cann't connect sqlite");
+    pool
 }
