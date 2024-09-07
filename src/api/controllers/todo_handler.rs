@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     Json,
 };
 
@@ -36,10 +36,11 @@ pub async fn create_todo_handler(
 pub async fn list_todo_handler(
     claims: Claims,
     State(container): State<Arc<Container>>,
-    Json(mut payload): Json<TodoQueryParams>,
+    Query(mut payload): Query<TodoQueryParams>,
 ) -> Result<ApiResponse<ResultPaging<TodoDTO>>, ApiError> {
     let cloned = container.todo_service.clone();
     payload.user_id = claims.sub;
+    println!("debug: {:?}", payload);
     let todos = cloned
         .list(payload)
         .await

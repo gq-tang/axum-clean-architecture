@@ -1,19 +1,19 @@
-use std::{env, sync::Arc, time::Duration};
+use std::{sync::Arc, time::Duration};
 
 use axum::{extract::State, Json};
 use chrono::Utc;
 use jsonwebtoken::{encode, EncodingKey, Header};
 
 use crate::{
-    api::dto::{
-        response::ApiResponse,
-        user::{AuthBody, Claims, CreateUserDTO, UserLoginDTO},
+    api::{
+        self,
+        dto::{
+            response::ApiResponse,
+            user::{AuthBody, Claims, CreateUserDTO, UserLoginDTO},
+        },
     },
     container::Container,
-    domain::{
-        constants,
-        error::{ApiError, CommonError},
-    },
+    domain::error::{ApiError, CommonError},
 };
 
 pub async fn register_handler(
@@ -44,7 +44,7 @@ pub async fn login(
         company: "TMD".to_string(),
         exp: exp.timestamp(),
     };
-    let secret = env::var(constants::JWT_SECRET).unwrap_or_else(|_| "verysecret".to_string());
+    let secret = api::get_jwt_secret();
     let token = encode(
         &Header::default(),
         &claims,

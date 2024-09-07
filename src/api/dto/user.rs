@@ -1,7 +1,9 @@
-use crate::domain::{
-    constants,
-    error::{ApiError, CommonError},
-    models::user::CreateUser,
+use crate::{
+    api,
+    domain::{
+        error::{ApiError, CommonError},
+        models::user::CreateUser,
+    },
 };
 use async_trait::async_trait;
 use axum::{extract::FromRequestParts, http::request::Parts, RequestPartsExt};
@@ -11,7 +13,6 @@ use axum_extra::{
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
-use std::env;
 use validator::Validate;
 
 #[derive(Deserialize, Validate)]
@@ -69,7 +70,7 @@ where
 {
     type Rejection = ApiError;
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-        let secret = env::var(constants::JWT_SECRET).unwrap_or_else(|_| "verysecret".to_string());
+        let secret = api::get_jwt_secret();
         let TypedHeader(Authorization(bearer)) = parts
             .extract::<TypedHeader<Authorization<Bearer>>>()
             .await
