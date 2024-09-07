@@ -5,7 +5,10 @@ use chrono::Utc;
 use jsonwebtoken::{encode, EncodingKey, Header};
 
 use crate::{
-    api::dto::user::{AuthBody, Claims, CreateUserDTO, UserLoginDTO},
+    api::dto::{
+        response::ApiResponse,
+        user::{AuthBody, Claims, CreateUserDTO, UserLoginDTO},
+    },
     container::Container,
     domain::{
         constants,
@@ -16,19 +19,19 @@ use crate::{
 pub async fn register_handler(
     State(container): State<Arc<Container>>,
     Json(payload): Json<CreateUserDTO>,
-) -> Result<&'static str, ApiError> {
+) -> Result<ApiResponse<()>, ApiError> {
     let cloned = container.user_service.clone();
     let _ = cloned
         .create(payload.into())
         .await
         .map_err(|e| -> ApiError { e.into() })?;
-    Ok("success")
+    Ok(ApiResponse::success())
 }
 
 pub async fn login(
     State(container): State<Arc<Container>>,
     Json(payload): Json<UserLoginDTO>,
-) -> Result<Json<AuthBody>, ApiError> {
+) -> Result<ApiResponse<AuthBody>, ApiError> {
     let cloned = container.user_service.clone();
     let user = cloned
         .login(payload.user_name, payload.password)
@@ -55,5 +58,5 @@ pub async fn login(
         .into()
     })?;
     let res = AuthBody::new(token);
-    Ok(Json(res))
+    Ok(ApiResponse::new(res))
 }

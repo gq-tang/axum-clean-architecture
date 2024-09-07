@@ -1,3 +1,8 @@
+use crate::domain::{
+    constants,
+    error::{ApiError, CommonError},
+    models::user::CreateUser,
+};
 use async_trait::async_trait;
 use axum::{extract::FromRequestParts, http::request::Parts, RequestPartsExt};
 use axum_extra::{
@@ -7,17 +12,15 @@ use axum_extra::{
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::env;
+use validator::Validate;
 
-use crate::domain::{
-    constants,
-    error::{ApiError, CommonError},
-    models::user::CreateUser,
-};
-
-#[derive(Deserialize)]
+#[derive(Deserialize, Validate)]
 pub struct CreateUserDTO {
+    #[validate(length(min = 1, message = "Can not be empty"))]
     pub user_name: String,
+    #[validate(length(min = 1, message = "Can not be empty"))]
     pub nick_name: String,
+    #[validate(length(min = 6, message = "Can not be empty"))]
     pub password: String,
 }
 
@@ -70,9 +73,9 @@ where
         let TypedHeader(Authorization(bearer)) = parts
             .extract::<TypedHeader<Authorization<Bearer>>>()
             .await
-            .map_err(|_| -> ApiError {
+            .map_err(|err| -> ApiError {
                 CommonError {
-                    message: "invalid token".to_string(),
+                    message: format!("invalid token: {err}"),
                     code: 403,
                 }
                 .into()
@@ -83,9 +86,9 @@ where
             &DecodingKey::from_secret(secret.as_bytes()),
             &Validation::default(),
         )
-        .map_err(|_| -> ApiError {
+        .map_err(|err| -> ApiError {
             CommonError {
-                message: "invalid token".to_string(),
+                message: format!("invalid token: {err}"),
                 code: 403,
             }
             .into()

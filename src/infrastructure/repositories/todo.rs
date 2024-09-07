@@ -1,10 +1,10 @@
 use crate::domain::models::todo::{CreateTodo, Todo};
-use crate::domain::repositories::repository::{QueryParams, RepositoryResult, ResultPaging};
+use crate::domain::repositories::repository::{RepositoryResult, ResultPaging};
 use crate::domain::repositories::todo::{TodoQueryParams, TodoRepository};
 use crate::infrastructure::database::sqlite::DBConn;
 use crate::infrastructure::models::todo::{CreateTodoPO, TodoPo};
 use async_trait::async_trait;
-use sqlx::Row;
+use sqlx::QueryBuilder;
 use std::sync::Arc;
 
 pub struct TodoSqlxRepository {
@@ -34,33 +34,31 @@ impl TodoRepository for TodoSqlxRepository {
 
     async fn list(&self, params: TodoQueryParams) -> RepositoryResult<ResultPaging<Todo>> {
         let mut connect = self.pool.clone().acquire().await.unwrap();
-        let mut query = "select * from todos".to_string();
-        let mut query_count = "select count(1) as total from todos".to_string();
-
-        let mut conditions = Vec::new();
-        conditions.push(format!("user_id={}", params.user_id));
-
-        if let Some(title) = params.title.clone() {
-            conditions.push(format!("title like '%{}%'", title));
-        }
-        if conditions.len() > 0 {
-            query = query + " where " + &conditions.join(" and ");
-            query_count = query_count + " where " + &conditions.join(" and ");
-        }
-
-        query = format!(
-            "{} limit {} offset {}",
-            query,
-            params.limit(),
-            params.offset()
+        let mut builder = QueryBuilder::new(
+            r#"
+        select * from todos where user_id =
+        "#,
         );
+        let mut count_builder = QueryBuilder::new(
+            r#"
+        select count(*) as total from todos where user_id=
+        "#,
+        );
+        builder.push_bind(params.user_id);
+        count_builder.push_bind(params.user_id);
+        if let Some(title) = params.title {
+            builder
+                .push(" and title like ")
+                .push_bind(format!("%{}%", title));
+            count_builder
+                .push(" and title like ")
+                .push_bind(format!("%{}%", title));
+        }
 
-        let count = sqlx::query(&query_count).fetch_one(&mut *connect).await?;
-        let count = count.get::<i64, _>(0);
-
-        let list = sqlx::query_as::<_, TodoPo>(&query)
-            .fetch_all(&mut *connect)
-            .await?;
+        let query = builder.build_query_as::<TodoPo>();
+        let list = query.fetch_all(&mut *connect).await?;
+        let count_query = count_builder.build_query_scalar::<i64>();
+        let count = count_query.fetch_one(&mut *connect).await?;
         Ok(ResultPaging {
             total: count,
             items: list.into_iter().map(|v| v.into()).collect(),
