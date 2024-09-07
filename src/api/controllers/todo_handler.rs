@@ -40,7 +40,7 @@ pub async fn list_todo_handler(
 ) -> Result<ApiResponse<ResultPaging<TodoDTO>>, ApiError> {
     let cloned = container.todo_service.clone();
     payload.user_id = claims.sub;
-    println!("debug: {:?}", payload);
+
     let todos = cloned
         .list(payload)
         .await
