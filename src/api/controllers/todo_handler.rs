@@ -4,6 +4,7 @@ use axum::{
     extract::{Path, Query, State},
     Json,
 };
+use validator::Validate;
 
 use crate::{
     api::dto::{
@@ -23,6 +24,13 @@ pub async fn create_todo_handler(
     State(container): State<Arc<Container>>,
     Json(mut payload): Json<CreateTodoDTO>,
 ) -> Result<ApiResponse<()>, ApiError> {
+    if let Err(e) = payload.validate() {
+        return Err(ApiError::from(CommonError {
+            message: e.to_string(),
+            code: 404,
+        }));
+    }
+
     let cloned = container.todo_service.clone();
     payload.user_id = claims.sub;
     let _ = cloned

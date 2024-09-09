@@ -35,9 +35,11 @@ impl Into<CreateUser> for CreateUserDTO {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Validate)]
 pub struct UserLoginDTO {
+    #[validate(length(min = 6, message = "Can not be empty"))]
     pub user_name: String,
+    #[validate(length(min = 6, message = "Can not be empty"))]
     pub password: String,
 }
 

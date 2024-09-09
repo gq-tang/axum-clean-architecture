@@ -3,6 +3,7 @@ use std::{sync::Arc, time::Duration};
 use axum::{extract::State, Json};
 use chrono::Utc;
 use jsonwebtoken::{encode, EncodingKey, Header};
+use validator::Validate;
 
 use crate::{
     api::{
@@ -20,6 +21,12 @@ pub async fn register_handler(
     State(container): State<Arc<Container>>,
     Json(payload): Json<CreateUserDTO>,
 ) -> Result<ApiResponse<()>, ApiError> {
+    if let Err(e) = payload.validate() {
+        return Err(ApiError::from(CommonError {
+            message: e.to_string(),
+            code: 404,
+        }));
+    }
     let cloned = container.user_service.clone();
     let _ = cloned
         .create(payload.into())
@@ -32,6 +39,13 @@ pub async fn login(
     State(container): State<Arc<Container>>,
     Json(payload): Json<UserLoginDTO>,
 ) -> Result<ApiResponse<AuthBody>, ApiError> {
+    if let Err(e) = payload.validate() {
+        return Err(ApiError::from(CommonError {
+            message: e.to_string(),
+            code: 404,
+        }));
+    }
+
     let cloned = container.user_service.clone();
     let user = cloned
         .login(payload.user_name, payload.password)

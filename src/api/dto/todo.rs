@@ -4,11 +4,13 @@ use crate::domain::repositories::repository::ResultPaging;
 use serde::Deserialize;
 use serde::Serialize;
 use time::PrimitiveDateTime;
+use validator::Validate;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Validate)]
 pub struct CreateTodoDTO {
     #[serde(skip)]
     pub user_id: i64,
+    #[validate(length(min = 6, message = "Can not be empty"))]
     pub title: String,
     pub description: String,
 }

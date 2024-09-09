@@ -3,8 +3,8 @@ use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct CommonError {
-    pub message: String,
     pub code: u32,
+    pub message: String,
 }
 
 impl std::fmt::Display for CommonError {
