@@ -51,4 +51,16 @@ impl TodoService for TodoServiceImpl {
             .await
             .map_err(|e| -> CommonError { e.into() })
     }
+
+    async fn completed(
+        &self,
+        user_id: i64,
+        todo_id: i64,
+        completed: bool,
+    ) -> Result<(), CommonError> {
+        self.repository
+            .completed(user_id, todo_id, completed)
+            .await
+            .map_err(|e| -> CommonError { e.into() })
+    }
 }

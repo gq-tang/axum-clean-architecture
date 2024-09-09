@@ -22,7 +22,7 @@ impl TodoRepository for TodoSqlxRepository {
     async fn create(&self, new_todo: &CreateTodo) -> RepositoryResult<i64> {
         let mut connect = self.pool.clone().acquire().await.unwrap();
         let t = CreateTodoPO::from(new_todo.clone());
-        let res = sqlx::query("insert into todos(user_id,title,description) values (?1,?2,?3)")
+        let res = sqlx::query("insert into todos(user_id,title,description) values (?,?,?)")
             .bind(t.user_id)
             .bind(t.title)
             .bind(t.description)
@@ -81,6 +81,19 @@ impl TodoRepository for TodoSqlxRepository {
         let mut connect = self.pool.clone().acquire().await.unwrap();
 
         let _ = sqlx::query("delete from todos where id=? and user_id=?")
+            .bind(todo_id)
+            .bind(user_id)
+            .execute(&mut *connect)
+            .await?;
+
+        Ok(())
+    }
+
+    async fn completed(&self, user_id: i64, todo_id: i64, completed: bool) -> RepositoryResult<()> {
+        let mut connect = self.pool.acquire().await.unwrap();
+
+        let _ = sqlx::query("update todos set completed=? where id=? and user_id=?")
+            .bind(completed)
             .bind(todo_id)
             .bind(user_id)
             .execute(&mut *connect)

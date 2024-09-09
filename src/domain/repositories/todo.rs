@@ -31,4 +31,5 @@ pub trait TodoRepository: Send + Sync {
     async fn list(&self, params: TodoQueryParams) -> RepositoryResult<ResultPaging<Todo>>;
     async fn get(&self, user_id: i64, todo_id: i64) -> RepositoryResult<Todo>;
     async fn delete(&self, user_id: i64, todo_id: i64) -> RepositoryResult<()>;
+    async fn completed(&self,user_id:i64,todo_id:i64,completed:bool)->RepositoryResult<()>; 
 }

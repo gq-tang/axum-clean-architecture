@@ -6,8 +6,9 @@ pub struct ApiResponse<T>
 where
     T: Serialize,
 {
-    pub message: String,
     pub code: u32,
+    pub message: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub data: Option<T>,
 }
 

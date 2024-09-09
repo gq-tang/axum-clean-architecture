@@ -11,4 +11,10 @@ pub trait TodoService: Send + Sync {
     async fn list(&self, param: TodoQueryParams) -> Result<ResultPaging<Todo>, CommonError>;
     async fn get(&self, user_id: i64, todo_id: i64) -> Result<Todo, CommonError>;
     async fn delete(&self, user_id: i64, todo_id: i64) -> Result<(), CommonError>;
+    async fn completed(
+        &self,
+        user_id: i64,
+        todo_id: i64,
+        completed: bool,
+    ) -> Result<(), CommonError>;
 }

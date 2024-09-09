@@ -56,3 +56,8 @@ impl Into<ResultPaging<TodoDTO>> for ResultPaging<Todo> {
         }
     }
 }
+
+#[derive(Deserialize)]
+pub struct CompletedTodoDTO {
+    pub completed: Option<bool>,
+}

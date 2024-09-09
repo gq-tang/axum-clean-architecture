@@ -6,5 +6,5 @@ pub mod controllers;
 pub mod dto;
 
 fn get_jwt_secret() -> String {
-    env::var(constants::JWT_SECRET).unwrap_or_else(|_| "verysecret".to_string())
+    env::var(constants::JWT_SECRET).unwrap_or("verysecret".to_string())
 }
