@@ -5,7 +5,6 @@ use crate::domain::{
     services::user::UserService,
 };
 use async_trait::async_trait;
-use dotenv::dotenv;
 use std::sync::Arc;
 
 pub struct UserServiceImpl {
@@ -14,8 +13,6 @@ pub struct UserServiceImpl {
 
 impl UserServiceImpl {
     pub fn new(repository: Arc<dyn UserRepository>) -> Self {
-        dotenv().ok();
-
         UserServiceImpl { repository }
     }
 }
