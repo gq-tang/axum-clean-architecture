@@ -14,7 +14,7 @@ use crate::{
         },
     },
     container::Container,
-    domain::error::{ApiError, CommonError},
+    domain::error::ApiError,
 };
 
 pub async fn register_handler(
@@ -22,10 +22,7 @@ pub async fn register_handler(
     Json(payload): Json<CreateUserDTO>,
 ) -> Result<ApiResponse<()>, ApiError> {
     if let Err(e) = payload.validate() {
-        return Err(ApiError::from(CommonError {
-            message: e.to_string(),
-            code: 404,
-        }));
+        return Err(ApiError::new(404, e));
     }
     let cloned = container.user_service.clone();
     let _ = cloned
@@ -40,10 +37,7 @@ pub async fn login(
     Json(payload): Json<UserLoginDTO>,
 ) -> Result<ApiResponse<AuthBody>, ApiError> {
     if let Err(e) = payload.validate() {
-        return Err(ApiError::from(CommonError {
-            message: e.to_string(),
-            code: 404,
-        }));
+        return Err(ApiError::new(404, e));
     }
 
     let cloned = container.user_service.clone();
@@ -64,13 +58,7 @@ pub async fn login(
         &claims,
         &EncodingKey::from_secret(secret.as_bytes()),
     )
-    .map_err(|_| -> ApiError {
-        CommonError {
-            message: "jwt encode failed".to_string(),
-            code: 403,
-        }
-        .into()
-    })?;
+    .map_err(|_| -> ApiError { ApiError::new(403, "jwt encode failed") })?;
     let res = AuthBody::new(token);
     Ok(ApiResponse::new(res))
 }

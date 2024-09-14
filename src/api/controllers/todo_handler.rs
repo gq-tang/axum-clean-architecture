@@ -14,7 +14,7 @@ use crate::{
     },
     container::Container,
     domain::{
-        error::{ApiError, CommonError},
+        error::ApiError,
         repositories::{repository::ResultPaging, todo::TodoQueryParams},
     },
 };
@@ -25,10 +25,7 @@ pub async fn create_todo_handler(
     Json(mut payload): Json<CreateTodoDTO>,
 ) -> Result<ApiResponse<()>, ApiError> {
     if let Err(e) = payload.validate() {
-        return Err(ApiError::from(CommonError {
-            message: e.to_string(),
-            code: 404,
-        }));
+        return Err(ApiError::new(404, e));
     }
 
     let cloned = container.todo_service.clone();
@@ -95,10 +92,7 @@ pub async fn completed_todo_handler(
     let user_id = claims.sub;
 
     if let None = params.completed {
-        return Err(ApiError::from(CommonError {
-            message: "Invalid param(completed)".to_string(),
-            code: 404,
-        }));
+        return Err(ApiError::new(404, "Invalid param(completed)"));
     }
 
     cloned

@@ -16,6 +16,18 @@ impl std::fmt::Display for CommonError {
 #[derive(Debug, Serialize)]
 pub struct ApiError(CommonError);
 
+impl ApiError {
+    pub fn new<T>(code: u32, msg: T) -> Self
+    where
+        T: ToString,
+    {
+        ApiError(CommonError {
+            code,
+            message: msg.to_string(),
+        })
+    }
+}
+
 impl From<CommonError> for ApiError {
     fn from(error: CommonError) -> Self {
         ApiError(error)
